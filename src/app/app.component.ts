@@ -33,9 +33,15 @@ export class AppComponent {
     let rect2 = rect.clone() as joint.shapes.basic.Rect;
     rect2.translate(300);
 
-    var link = new joint.dia.Link({
+    var targetArrowheadTool = new joint.linkTools.TargetArrowhead({
+      focusOpacity: 0.5
+    });
+
+    var link = new joint.shapes.standard.Link();
+
+    var link = new joint.shapes.standard.Link({
       source: { id: rect.id },
-      target: { id: rect2.id }
+      target: { id: rect2.id}
     });
 
     graph.addCells([rect, rect2, link]);
