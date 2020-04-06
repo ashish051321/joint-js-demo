@@ -1,0 +1,219 @@
+drawingSimpelExample() {
+    let graph = new joint.dia.Graph;
+
+    let paper = new joint.dia.Paper({
+      el: jQuery("#paper"),
+      width: 600,
+      height: 200,
+      model: graph,
+      gridSize: 1
+    });
+
+    let rect = new joint.shapes.basic.Rect({
+      position: { x: 100, y: 30 },
+      size: { width: 100, height: 30 },
+      attrs: { rect: { fill: 'blue' }, text: { text: 'my box', fill: 'white' } }
+    });
+
+    let rect2 = rect.clone() as joint.shapes.basic.Rect;
+    rect2.translate(300);
+
+    var targetArrowheadTool = new joint.linkTools.TargetArrowhead({
+      focusOpacity: 0.5
+    });
+
+    var link = new joint.shapes.standard.Link();
+
+    var link = new joint.shapes.standard.Link({
+      source: { id: rect.id },
+      target: { id: rect2.id }
+    });
+
+    graph.addCells([rect, rect2, link]);
+  }
+
+
+
+
+   curvedLinksExample() {
+    const graph = new joint.dia.Graph;
+
+    const paper = new joint.dia.Paper({
+      el: jQuery("#paper"),
+      width: '100%',
+      height: '100%',
+      model: graph,
+      gridSize: 10,
+      drawGrid: true,
+      background: {
+        color: 'rgba(0, 255, 0, 0.3)'
+      }
+    });
+
+    paper.options.connectionStrategy = joint.connectionStrategies.useDefaults;
+
+    var rect = new joint.shapes.standard.Rectangle();
+    rect.position(100, 30);
+    rect.resize(100, 40);
+    rect.attr({
+      body: {
+        fill: 'blue'
+      },
+      label: {
+        text: 'Rule - 1b',
+        fill: 'white'
+      }
+    });
+    rect.addTo(graph);
+
+    var rect2 = rect.clone();
+    // rect2.translate(0, 200);
+    rect2.attr('label/text', 'Rule - 1c');
+    rect2.attr('body/fill', 'green');
+    rect2.attr('label/fill', 'darkgray');
+    rect2.addTo(graph);
+
+    const link1 = new joint.shapes.standard.Link();
+    link1.source(rect);
+    link1.target(rect2);
+    link1.router('manhattan');
+    link1.attr({
+      line: {
+        stroke: 'blue',
+        strokeWidth: 1,
+        targetMarker: {
+          'type': 'path',
+          'stroke': 'black',
+          'fill': 'black',
+          'd': 'M 10 -5 0 0 10 5 Z'
+        }
+      }
+    });
+    link1.labels([{
+      attrs: {
+        text: {
+          text: 'Hello, World!'
+        }
+      }
+    }]);
+    link1.connector('smooth');
+    link1.addTo(graph);
+
+    // paper.scale(0.5, 0.5);
+
+  }
+
+    gridLayout() {
+    const graph = new joint.dia.Graph;
+
+    const paper = new joint.dia.Paper({
+      el: jQuery("#paper"),
+      width: '100%',
+      height: '100%',
+      model: graph,
+      gridSize: 10,
+      drawGrid: true,
+      background: {
+        color: 'rgba(0, 255, 0, 0.3)'
+      }
+    });
+
+    graph.addCells([
+      new joint.shapes.basic.Rect({ size: { width: 80, height: 50 } }),
+      new joint.shapes.basic.Rect({ size: { width: 50, height: 50 } }),
+      new joint.shapes.basic.Circle({ size: { width: 80, height: 50 } }),
+      new joint.shapes.basic.Circle({ size: { width: 50, height: 50 } })
+    ]);
+
+    // Layout the entire graph
+    // joint.layout.GridLayout.layout(graph, {
+    //   columns: 2,
+    //   columnWidth: 100,
+    //   rowHeight: 70
+    // });
+
+    // // Layout the circles with minimal resulting `y` coordinate equals 100.
+    // var circles = graph.getElements().filter(function (el) {
+    //   return el instanceof joint.shapes.basic.Circle;
+    // });
+    // joint.layout.GridLayout.layout(circles, {
+    //   columns: 2,
+    //   marginY: 100
+    // });
+  }
+
+
+
+
+  directedGraph() {
+    const graph = new joint.dia.Graph;
+
+    const paper = new joint.dia.Paper({
+      el: jQuery("#paper"),
+      width: '100%',
+      height: '100%',
+      model: graph,
+      gridSize: 10,
+      drawGrid: true,
+      background: {
+        color: 'rgba(0, 255, 0, 0.3)'
+      }
+    });
+
+    paper.options.connectionStrategy = joint.connectionStrategies.useDefaults;
+
+
+    var graphBBox = joint.layout.DirectedGraph.layout(graph, {
+      dagre: dagre,
+      graphlib: graphlib,
+      nodeSep: 50,
+      edgeSep: 80,
+      rankDir: "LR"
+    });
+
+    const data = {
+      "My element": ["b", "c"],
+      "b": ["f"],
+      "c": ["e", "d"],
+      "d": [],
+      "e": [],
+      "f": ["g"],
+      "g": []
+    };
+    let x = 100;
+    // const node1 = this.createHTMLBox(x, 30, 'node 1');
+    const node1 = this.createBox(x, 30, 'node 1');
+    x += 100;
+    node1.addTo(graph);
+    // const node2 = this.createHTMLBox(x, 30, 'node 2');
+    const node2 = this.createBox(x, 30, 'node 2');
+    node2.addTo(graph);
+
+    const link1 = new joint.shapes.standard.Link();
+
+    link1.source(node1);
+    link1.target(node2);
+
+    link1.router('manhattan');
+    link1.attr({
+      line: {
+        stroke: 'blue',
+        strokeWidth: 1,
+        targetMarker: {
+          'type': 'path',
+          'stroke': 'black',
+          'fill': 'black',
+          'd': 'M 10 -5 0 0 10 5 Z'
+        }
+      }
+    });
+    link1.labels([{
+      attrs: {
+        text: {
+          text: 'Hello, World!'
+        }
+      }
+    }]);
+    link1.connector('smooth');
+    link1.addTo(graph);
+  }

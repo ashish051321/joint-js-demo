@@ -21,7 +21,9 @@
     "@angular/router": "~8.2.11",
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",
-    "zone.js": "~0.9.1"
+    "zone.js": "~0.9.1",
+    "dagre" : "^0.8.4",
+    "@dagrejs/graphlib": "^2.1.4"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.803.12",
