@@ -121,7 +121,7 @@ export class AppComponent {
     var verticesTool = new joint.linkTools.Vertices({
       snapRadius: 10
     });
-    const effectiveNodes: GraphNode[] = localStorage.getItem('myNodes') ? localStorage.getItem('myNodes') as unknown as GraphNode[] : this.defaultNodes;
+    const effectiveNodes: GraphNode[] = localStorage.getItem('myNodes') ? JSON.parse(localStorage.getItem('myNodes')).nodes as unknown as GraphNode[] : this.defaultNodes;
     console.log(effectiveNodes);
     const struct: GraphStructure = {
       name: 'My Directed Graph',
@@ -256,12 +256,8 @@ export class AppComponent {
 
   }
 
-  reArrangeItems() {
-    console.log(this.jsGraph.getElements());
-    this.saveGraph();
-  }
-
   saveGraph() {
+    console.log(this.jsGraph.getElements());
     let draftNodes: GraphNode[] = [];
     console.log(this.jsGraph.getElements());
     let x: any[] = this.jsGraph.getElements();
@@ -290,10 +286,14 @@ export class AppComponent {
     // }, { outbound: true });
     console.log('--------');
     console.log(draftNodes);
-    
+    localStorage.setItem('myNodes', JSON.stringify({ nodes: draftNodes }));
 
+  }
 
-
+  addElement() {
+    const nodeName = prompt('Node name please ?');
+    const rect = this.createBox(10, 10, nodeName);
+    rect.addTo(this.jsGraph);
   }
 
 }
