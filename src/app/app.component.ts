@@ -16,14 +16,14 @@ import graphlib from 'graphlib';
 export class AppComponent {
   title = 'joint-js-demo';
 
-  verticesTool = new joint.linkTools.Vertices();
-  segmentsTool = new joint.linkTools.Segments();
-  boundaryTool = new joint.linkTools.Boundary();
-  removeTool = new joint.linkTools.Remove()
+  // verticesTool = new joint.linkTools.Vertices();
+  // segmentsTool = new joint.linkTools.Segments();
+  // boundaryTool = new joint.linkTools.Boundary();
+  // removeTool = new joint.linkTools.Remove()
 
-  toolsView = new joint.dia.ToolsView({
-    tools: [this.removeTool]
-  });
+  // toolsView = new joint.dia.ToolsView({
+  //   tools: [this.removeTool]
+  // });
 
   // JointJS paper for graph to be drawn on
   jsPaper: joint.dia.Paper;
@@ -136,7 +136,6 @@ export class AppComponent {
 
         var coordinates = new joint.g.Point(x, y);
         var elementAbove = elementView.model;
-        console.log(jsGraph);
         var elementBelow = this.model.findModelsFromPoint(coordinates).find(function (el) {
           return (el.id !== elementAbove.id);
         });
@@ -212,8 +211,9 @@ export class AppComponent {
       const currentRect = this.nodeMap[node.id];
       node.dependents.forEach(dependentNodeName => {
         const sourceNodeRect = this.nodeMap[dependentNodeName];
+        let link;
         if (sourceNodeRect) {
-          const link = new joint.shapes.standard.Link({
+          link = new joint.shapes.standard.Link({
             source: currentRect,
             target: sourceNodeRect,
             smooth: false,
@@ -225,15 +225,15 @@ export class AppComponent {
               }
             },
           });
-          // var tools = new joint.dia.ToolsView({
-          //   tools: [new joint.linkTools.Remove()]
-          // });
-
           link.addTo(this.jsGraph);
-          var linkView = link.findView(this.jsPaper);
-          linkView.addTools(this.toolsView);
+          const linkView = link.findView(this.jsPaper);
+          const removeTool = new joint.linkTools.Remove()
 
-        }
+          const toolsView = new joint.dia.ToolsView({
+            tools: [removeTool]
+          });
+          linkView.addTools(toolsView);
+         }
       });
     });
   }
