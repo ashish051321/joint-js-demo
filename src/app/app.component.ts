@@ -16,6 +16,15 @@ import graphlib from 'graphlib';
 export class AppComponent {
   title = 'joint-js-demo';
 
+  verticesTool = new joint.linkTools.Vertices();
+  segmentsTool = new joint.linkTools.Segments();
+  boundaryTool = new joint.linkTools.Boundary();
+  removeTool = new joint.linkTools.Remove()
+
+  toolsView = new joint.dia.ToolsView({
+    tools: [this.removeTool]
+  });
+
   // JointJS paper for graph to be drawn on
   jsPaper: joint.dia.Paper;
 
@@ -216,24 +225,14 @@ export class AppComponent {
               }
             },
           });
-          // const link = new joint.shapes.standard.Link();
-          // link.source(currentRect);
-          // link.target(sourceNodeRect);
-          // link.router('manhattan');
-          // // link.smooth = true;
-          // link.attr({
-          //   line: {
-          //     stroke: 'blue',
-          //     strokeWidth: 1,
-          //     targetMarker: {
-          //       'type': 'path',
-          //       'stroke': 'black',
-          //       'fill': 'black',
-          //       'd': 'M 10 -5 0 0 10 5 Z'
-          //     }
-          //   }
+          // var tools = new joint.dia.ToolsView({
+          //   tools: [new joint.linkTools.Remove()]
           // });
+
           link.addTo(this.jsGraph);
+          var linkView = link.findView(this.jsPaper);
+          linkView.addTools(this.toolsView);
+
         }
       });
     });
