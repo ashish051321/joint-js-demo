@@ -34,11 +34,69 @@ export class AppComponent {
 
   jsGraph: joint.dia.Graph;
 
+  defaultNodes: GraphNode[];
+
   // node ID -> JointJS Object map
   nodeMap: {};
 
   constructor() {
     this.jsGraph = new joint.dia.Graph;
+    this.defaultNodes = [
+      {
+        id: 'Rule-1',
+        name: 'Rule-1',
+        description: '',
+        dependents: ['Rule-2', 'Rule-3']
+      },
+
+      {
+        id: 'Rule-2',
+        name: 'Rule-2',
+        description: '',
+        dependents: ['Rule-4']
+      },
+
+      {
+        id: 'Rule-3',
+        name: 'Rule-3',
+        description: '',
+        dependents: ['Rule-5', 'Rule-8']
+      },
+
+      {
+        id: 'Rule-4',
+        name: 'Rule-4',
+        description: '',
+        dependents: ['Rule-6']
+      },
+
+      {
+        id: 'Rule-5',
+        name: 'Rule-5',
+        description: '',
+        dependents: ['Rule-7']
+      },
+
+      {
+        id: 'Rule-6',
+        name: 'Rule-6',
+        description: '',
+        dependents: []
+      },
+      {
+        id: 'Rule-7',
+        name: 'Rule-7',
+        description: '',
+        dependents: []
+      },
+      {
+        id: 'Rule-8',
+        name: 'Rule-8',
+        description: '',
+        dependents: []
+      }
+    ];
+
   }
 
   ngOnInit() {
@@ -63,61 +121,13 @@ export class AppComponent {
     var verticesTool = new joint.linkTools.Vertices({
       snapRadius: 10
     });
-
+    const effectiveNodes: GraphNode[] = localStorage.getItem('myNodes') ? localStorage.getItem('myNodes') as unknown as GraphNode[] : this.defaultNodes;
+    console.log(effectiveNodes);
     const struct: GraphStructure = {
       name: 'My Directed Graph',
       description: 'This is a demo of the joint js library',
       system: 'Angular 8+',
-      nodes: [
-        {
-          id: 'a',
-          name: 'I am root',
-          description: 'ashish',
-          dependents: ['b', 'c']
-        },
-
-        {
-          id: 'b',
-          name: 'I am b',
-          description: 'ashish',
-          dependents: ['d']
-        },
-
-        {
-          id: 'c',
-          name: 'I am c',
-          description: 'ashish',
-          dependents: []
-        },
-
-        {
-          id: 'd',
-          name: 'I am d',
-          description: 'ashish',
-          dependents: ['e']
-        },
-
-        {
-          id: 'e',
-          name: 'I am e',
-          description: 'ashish',
-          dependents: ['f', 'g']
-        },
-
-        {
-          id: 'f',
-          name: 'I am f',
-          description: 'ashish',
-          dependents: []
-        },
-
-        {
-          id: 'g',
-          name: 'i am g',
-          description: 'ashish',
-          dependents: []
-        },
-      ]
+      nodes: effectiveNodes
     };
 
 
@@ -233,7 +243,7 @@ export class AppComponent {
             tools: [removeTool]
           });
           linkView.addTools(toolsView);
-         }
+        }
       });
     });
   }
@@ -247,7 +257,43 @@ export class AppComponent {
   }
 
   reArrangeItems() {
-    console.log(this.jsGraph.getFirstCell());
+    console.log(this.jsGraph.getElements());
+    this.saveGraph();
+  }
+
+  saveGraph() {
+    let draftNodes: GraphNode[] = [];
+    console.log(this.jsGraph.getElements());
+    let x: any[] = this.jsGraph.getElements();
+    x.forEach(item => {
+      console.log(item.attributes.attrs.text.text);
+      draftNodes.push({
+        id: item.attributes.attrs.text.text,
+        name: item.attributes.attrs.text.text,
+        description: item.attributes.attrs.text.text,
+        dependents: []
+      });
+    });
+
+    x.forEach(item => {
+      // console.log(this.jsGraph.getSuccessors(item,{deep:false}));
+      // const childrenOfItem = this.jsGraph.getSuccessors(item, { deep: false, breadthFirst: true }).filter(x => this.jsGraph.isNeighbor(x, item)).
+      //   map(elem => elem.attributes.attrs.text.text).reduce((acc, ele) => (acc + '+' + ele), '');
+      const childrenOfItem: any[] = this.jsGraph.getSuccessors(item, { deep: false, breadthFirst: true }).filter(x => this.jsGraph.isNeighbor(x, item));
+      childrenOfItem.forEach(x => {
+        draftNodes.find(elem => (elem.id === item.attributes.attrs.text.text)).dependents.push(x.attributes.attrs.text.text);
+      });
+      // console.log('Children of ' + item.attributes.attrs.text.text + ': ' + childrenOfItem);
+    });
+
+    // this.jsGraph.bfs(this.jsGraph.getFirstCell(), function (element, distance) {
+    // }, { outbound: true });
+    console.log('--------');
+    console.log(draftNodes);
+    
+
+
+
   }
 
 }
