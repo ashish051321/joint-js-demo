@@ -39,6 +39,9 @@ export class AppComponent {
   // node ID -> JointJS Object map
   nodeMap: {};
 
+  // selected element - Handy for deleting an element.
+  selected;
+
   constructor() {
     this.jsGraph = new joint.dia.Graph;
     this.defaultNodes = [
@@ -134,12 +137,15 @@ export class AppComponent {
 
 
     this.setupNewGraphStructure(struct);
+    let appComponentThisRef = this;
+    
     const jsGraph = this.jsGraph;
     this.jsPaper.on({
 
       'element:pointerdown': function (elementView, evt) {
 
         evt.data = elementView.model.position();
+        appComponentThisRef.selected = elementView.model;
       },
 
       'element:pointerup': function (elementView, evt, x, y) {
@@ -294,6 +300,10 @@ export class AppComponent {
     const nodeName = prompt('Node name please ?');
     const rect = this.createBox(10, 10, nodeName);
     rect.addTo(this.jsGraph);
+  }
+
+  onRemoveButonClick() {
+    if (this.selected) { this.selected.remove(); }
   }
 
 }
